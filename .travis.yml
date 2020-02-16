@@ -3,4 +3,5 @@ language: java
 jdk: oraclejdk8
  
 script:
+- docker-compose up -d
 - ./mvnw clean install -B
