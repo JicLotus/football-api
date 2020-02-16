@@ -3,6 +3,7 @@ package com.santex.footballapi.player;
 import com.santex.footballapi.model.player.Player;
 import com.santex.footballapi.repository.PlayerRepository;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -15,7 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class PlayerTests {
+public class PlayerEntityTests {
  
     @Autowired
     private TestEntityManager entityManager;
@@ -23,21 +24,24 @@ public class PlayerTests {
     @Autowired
     private PlayerRepository playerRepository;
  
+    private Player jose;
+
+    @Before
+	public void setUp() {
+        jose = new Player()
+            .setId(1L)
+            .setName("Alex")
+            .setCountryOfBirth("CountryOfBirth")
+            .setDateOfBirth("DateOfBirth")
+            .setNationality("TheNationality")
+            .setPosition("ThePosition");
+    }
 
     @Test
-    public void whenFindByName_thenReturnEmployee() {
-        // given
-        Player alex = new Player();
-        alex.setId(1L);
-        alex.setName("Alex");
-        entityManager.persist(alex);
-        entityManager.flush();
-     
-        // when
-        Player found = playerRepository.findByName(alex.getName());
-     
-        assertThat(found.getName().toString()).isEqualTo("Alex");
+    public void whenFindById_thenReturnPlayer() {
+        entityManager.persistAndFlush(jose);
+        Player found = playerRepository.findById(jose.getId()).get();
+        assertThat(found).isEqualTo(jose);
     }
     
- 
 }
