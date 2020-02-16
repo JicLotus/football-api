@@ -26,6 +26,8 @@ public class Competition {
     private String name;
     private String code;
     private String areaName;
+    @Transient
+    private Area area;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "competition_team",

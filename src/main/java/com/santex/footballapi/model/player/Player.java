@@ -29,7 +29,9 @@ public class Player {
     private String dateOfBirth;
     private String countryOfBirth;
     private String nationality;
+    @Transient
+    private String role;
 
-    @OneToMany(mappedBy = "players")
+    @ManyToMany(mappedBy = "players")
     private Set<Team> teams = new HashSet<>();
 }

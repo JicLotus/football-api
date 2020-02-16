@@ -33,7 +33,7 @@ public class Team {
     @ManyToMany(mappedBy = "teams")
     private Set<Competition> competitions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "team_player",
         joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "player_id", referencedColumnName = "id"))
