@@ -2,17 +2,11 @@ package com.santex.footballapi.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.santex.footballapi.util.DateUtils;
-
-import org.springframework.beans.factory.annotation.Value;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-
-
 
 
 @Getter
