@@ -81,6 +81,11 @@ public class CompetitionEntityTests {
 
         assertThat(found.getTeams().size()).isEqualTo(1);
         assertThat(found).isEqualTo(competition);
+
+        found = competitionRepository.getByCode(competition.getCode());
+
+        assertThat(found.getTeams().size()).isEqualTo(1);
+        assertThat(found).isEqualTo(competition);
     }
     
 }
