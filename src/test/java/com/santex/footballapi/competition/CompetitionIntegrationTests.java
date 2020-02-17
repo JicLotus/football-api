@@ -18,11 +18,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import javax.persistence.EntityNotFoundException;
+
 @RunWith(SpringRunner.class)
 public class CompetitionIntegrationTests {
  
     @TestConfiguration
-    static class EmployeeServiceImplTestContextConfiguration {
+    static class CompetitionsServiceImplTestContextConfiguration {
   
         @Bean
         public CompetitionsService competitionService() {
@@ -56,5 +58,11 @@ public class CompetitionIntegrationTests {
         assertThat(compDTO.getTotal())
             .isEqualTo(10);
     }
+  
+    @Test(expected = EntityNotFoundException.class)
+    public void whenInvalidName_thenGetInvalidEntityException() {
+        CompetitionsDto compDTO = competitionService.getTotalPlayers("PL");
+    }
+
     
 }

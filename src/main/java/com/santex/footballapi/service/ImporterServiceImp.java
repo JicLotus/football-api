@@ -1,11 +1,9 @@
 package com.santex.footballapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.EntityNotFoundException;
@@ -50,10 +48,8 @@ public class ImporterServiceImp implements ImporterService {
     private String teamsUrl = "https://api.football-data.org/v2/competitions/%s/teams";
     private String playersUrl = "https://api.football-data.org/v2/teams/";
 
-    //Avoid loading all entities when project begins
     @Override
     public Response<Object> importFromLeagueCode(String leagueCode) {
-        
         try{
             this.checkIfCompetitionExist(leagueCode);
             Competition competition = this.fetchCompetition(leagueCode);
