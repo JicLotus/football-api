@@ -15,6 +15,7 @@ import com.santex.footballapi.model.player.Player;
 import com.santex.footballapi.model.team.Team;
 import com.santex.footballapi.repository.CompetitionRepository;
 import com.santex.footballapi.repository.TeamRepository;
+import com.santex.footballapi.util.Properties;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -39,14 +40,8 @@ public class ImporterServiceImp implements ImporterService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private static HttpEntity<String> entity = buildHttpEntity();
-
-    //@Value("{importer.sleeptime.miliseconds}")
-    //private Integer sleep;
-
-    //TOOD: Add as env configuration
-    private String teamsUrl = "https://api.football-data.org/v2/competitions/%s/teams";
-    private String playersUrl = "https://api.football-data.org/v2/teams/";
+    @Autowired
+    private Properties properties;
 
     @Override
     public Response<Object> importFromLeagueCode(String leagueCode) {
@@ -56,7 +51,7 @@ public class ImporterServiceImp implements ImporterService {
             competitionRepository.flush();
             competitionRepository.save(competition);
             this.savePlayers(competition);
-            return Response.successfullyImported();
+            return Response.successfullyImported(); 
         }
         catch(HttpClientErrorException ex){
             HttpStatus status = ex.getStatusCode();
@@ -78,7 +73,7 @@ public class ImporterServiceImp implements ImporterService {
             teamRepository.flush();
             teamRepository.save(team);
             try {
-                Thread.sleep(5 * 1000);
+                Thread.sleep(properties.IMPORTER_SLEEPTIME_MILISECONDS());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -87,8 +82,10 @@ public class ImporterServiceImp implements ImporterService {
 
     private Set<Player> fetchPlayers(Team team){
         Long teamId = team.getId();
-        String newUrl = playersUrl.concat(String.valueOf(teamId));
-        ResponseEntity<TeamImporter> playersResponse = restTemplate.exchange(newUrl, HttpMethod.GET, entity,
+        String newUrl = properties
+                            .IMPORTER_TEAMS_URL()
+                            .concat(String.valueOf(teamId));
+        ResponseEntity<TeamImporter> playersResponse = restTemplate.exchange(newUrl, HttpMethod.GET, this.buildHttpEntity(),
                 TeamImporter.class);
         TeamImporter teamImp = playersResponse.getBody();
         return teamImp.getPlayers();
@@ -97,9 +94,9 @@ public class ImporterServiceImp implements ImporterService {
     private Competition fetchCompetition(String leagueCode){     
         ResponseEntity<CompetitionImporter> response = restTemplate
                                                 .exchange(
-                                                    String.format(teamsUrl,leagueCode),
+                                                    String.format(properties.IMPORTER_COMPETITIONS_TEAMS_URL(),leagueCode),
                                                     HttpMethod.GET,
-                                                    entity,
+                                                    this.buildHttpEntity(),
                                                     CompetitionImporter.class);
         CompetitionImporter compImporter = response.getBody();
         Competition competition = compImporter.getCompetition();
@@ -114,9 +111,9 @@ public class ImporterServiceImp implements ImporterService {
         }
     }
 
-    private static HttpEntity<String> buildHttpEntity(){
+    private HttpEntity<String> buildHttpEntity(){
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-Auth-Token", "a18d01fde9094e2ca0844cb162aeac8e");
+        headers.add("X-Auth-Token", properties.IMPORTER_TOKEN());
         HttpEntity<String> entity = new HttpEntity<String>("parameters", headers);
         return entity;
     }
