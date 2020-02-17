@@ -16,10 +16,15 @@ public class CompetitionsServiceImp implements CompetitionsService {
 
     @Override
     public CompetitionsDto getTotalPlayers(String leagueCode) {
-        this.checkIfLeagueCodeDoesNotExist(leagueCode);
-        int total = competitionRepository.getTotalPlayers(leagueCode);
-        return new CompetitionsDto()
-                .setTotal(total);
+        try{
+            this.checkIfLeagueCodeDoesNotExist(leagueCode);
+            int total = competitionRepository.getTotalPlayers(leagueCode);
+            return new CompetitionsDto()
+                    .setTotal(total);
+        }
+        catch (Exception ex){
+            throw ex;
+        }
     }
 
     private void checkIfLeagueCodeDoesNotExist(String legueCode){
