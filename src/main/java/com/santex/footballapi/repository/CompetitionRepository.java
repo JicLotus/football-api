@@ -14,4 +14,6 @@ import org.springframework.stereotype.Repository;
 public interface CompetitionRepository extends JpaRepository<Competition, Long> {
     @Query("SELECT count(c) FROM Competition c INNER JOIN c.teams t INNER JOIN t.players WHERE c.code = :code")
     public int getTotalPlayers(@Param("code") String code);
+
+    public Competition getByCode(String code);
 }

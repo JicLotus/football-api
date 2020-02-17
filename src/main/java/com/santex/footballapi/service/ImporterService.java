@@ -1,6 +1,8 @@
 
 package com.santex.footballapi.service;
 
+import com.santex.footballapi.dto.response.Response;
+
 public interface ImporterService {
     /**
      * Get total players
@@ -8,6 +10,6 @@ public interface ImporterService {
      * @param userDto
      * @return
      */
-    void importFromLeagueCode(String leagueCode);
+    Response<Object> importFromLeagueCode(String leagueCode);
 
 }
