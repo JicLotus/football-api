@@ -23,8 +23,10 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .paths(PathSelectors.ant("/api/**"))
-                .apis(RequestHandlerSelectors.basePackage("com.santex"))
+                //.paths(PathSelectors.ant("/api/**"))
+                //.apis(RequestHandlerSelectors.basePackage("com.santex.footballapi.controller.v1"))
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo());
     }
