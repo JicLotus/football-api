@@ -16,13 +16,13 @@ public class CompetitionsServiceImp implements CompetitionsService {
 
     @Override
     public CompetitionsDto getTotalPlayers(String leagueCode) {
-        this.doesLeagueCodeExist(leagueCode);
+        this.checkIfLeagueCodeDoesNotExist(leagueCode);
         int total = competitionRepository.getTotalPlayers(leagueCode);
         return new CompetitionsDto()
                 .setTotal(total);
     }
 
-    private void doesLeagueCodeExist(String legueCode){
+    private void checkIfLeagueCodeDoesNotExist(String legueCode){
         if (competitionRepository.getByCode(legueCode)==null){
             throw new EntityNotFoundException();
         }

@@ -5,6 +5,7 @@ import javax.persistence.EntityNotFoundException;
 import com.santex.footballapi.dto.response.Response;
 import com.santex.footballapi.exception.FootballApiExceptions.LeagueCodeAlreadyImportedException;
 
+import org.hibernate.exception.JDBCConnectionException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -24,15 +25,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        Response<Object> response = Response.notFound();
+        Response<Object> response = Response.badRequest();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
     protected ResponseEntity<Object> handleHttpClientError(
             HttpClientErrorException ex) {
-        Response<Object> response = Response.notFound();
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        Response<Object> response = Response.serverError();
+        return new ResponseEntity<>(response, HttpStatus.GATEWAY_TIMEOUT);
+    }
+
+    @ExceptionHandler(JDBCConnectionException.class)
+    protected ResponseEntity<Object> handleJDBCConnection(
+            JDBCConnectionException ex) {
+        Response<Object> response = Response.serverError();
+        return new ResponseEntity<>(response, HttpStatus.GATEWAY_TIMEOUT);
     }
 
     @ExceptionHandler(LeagueCodeAlreadyImportedException.class)
@@ -67,7 +75,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(
             NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        Response<Object> response = Response.notFound();
+        Response<Object> response = Response.badRequest();
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 

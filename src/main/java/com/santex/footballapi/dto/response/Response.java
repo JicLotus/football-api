@@ -26,26 +26,28 @@ public class Response<T> {
     private String message;
 
     public static <T> Response<T> leagueCodeAlreadyImportedException() {
-        Response<T> response = new Response<>();
-        response.setMessage("League already imported");
-        return response;
+        return buildResponse("League already imported");
     }
 
     public static <T> Response<T> notFound() {
-        Response<T> response = new Response<>();
-        response.setMessage("Not found");
-        return response;
+        return buildResponse("Not found");
+    }
+
+    public static <T> Response<T> badRequest() {
+        return buildResponse("Bad request");
     }
 
     public static <T> Response<T> successfullyImported() {
-        Response<T> response = new Response<>();
-        response.setMessage("Successfully imported");
-        return response;
+        return buildResponse("Successfully imported");
     }
 
-    public static <T> Response<T> serverErro() {
+    public static <T> Response<T> serverError() {
+        return buildResponse("Server error");
+    }
+
+    public static <T> Response<T> buildResponse(String message){
         Response<T> response = new Response<>();
-        response.setMessage("Server error");
+        response.setMessage(message);
         return response;
     }
 
