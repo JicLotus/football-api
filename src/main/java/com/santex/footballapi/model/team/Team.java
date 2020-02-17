@@ -8,12 +8,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import javax.persistence.*;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(exclude = "players")
 
 @Getter
 @Setter
@@ -33,7 +35,7 @@ public class Team {
     @ManyToMany(mappedBy = "teams")
     private Set<Competition> competitions = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "team_player",
         joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "player_id", referencedColumnName = "id"))

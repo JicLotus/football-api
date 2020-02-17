@@ -32,6 +32,6 @@ public class Player {
     @Transient
     private String role;
 
-    @ManyToMany(mappedBy = "players")
+    @ManyToMany(mappedBy = "players", fetch = FetchType.LAZY)
     private Set<Team> teams = new HashSet<>();
 }

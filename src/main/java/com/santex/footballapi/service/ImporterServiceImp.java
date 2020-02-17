@@ -5,11 +5,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.EntityNotFoundException;
 
 import com.santex.footballapi.dto.response.Response;
 import com.santex.footballapi.model.competition.Competition;
 import com.santex.footballapi.model.competition.CompetitionImporter;
+import com.santex.footballapi.model.player.Player;
 import com.santex.footballapi.model.team.Team;
 import com.santex.footballapi.repository.CompetitionRepository;
 import com.santex.footballapi.repository.TeamRepository;
@@ -51,28 +55,13 @@ public class ImporterServiceImp implements ImporterService {
     public Response<Object> importFromLeagueCode(String leagueCode) {
         
         try{
-            
+            this.checkIfCompetitionExist(leagueCode);
             Competition competition = this.fetchCompetition(leagueCode);
-            this.checkIfCompetitionExist(competition);
 
+            competitionRepository.flush();
             competitionRepository.save(competition);
-
-            competition.getTeams().forEach((Team team) -> {
-                Long teamId = team.getId();
-                String newUrl = playersUrl.concat(String.valueOf(teamId));
-                ResponseEntity<TeamImporter> playersResponse = restTemplate.exchange(newUrl, HttpMethod.GET, entity,
-                        TeamImporter.class);
-                TeamImporter teamImp = playersResponse.getBody();
-                team.setPlayers(teamImp.getPlayers());
-                teamRepository.save(team);
-                try {
-                    //TODO: Add as env configuration
-                    Thread.sleep(5 * 1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-
+            this.savePlayers(competition);
+ 
             return Response.successfullyImported();
         }
         catch(HttpClientErrorException ex){
@@ -85,6 +74,30 @@ public class ImporterServiceImp implements ImporterService {
         catch (Exception ex){
             throw ex;
         }
+    }
+
+    private void savePlayers(Competition competition){
+        Set<Team> teams = competition.getTeams();
+        for(Team team : teams){
+            Set<Player> players = fetchPlayers(team);
+            team.setPlayers(players);
+            teamRepository.flush();
+            teamRepository.save(team);
+            try {
+                Thread.sleep(5 * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private Set<Player> fetchPlayers(Team team){
+        Long teamId = team.getId();
+        String newUrl = playersUrl.concat(String.valueOf(teamId));
+        ResponseEntity<TeamImporter> playersResponse = restTemplate.exchange(newUrl, HttpMethod.GET, entity,
+                TeamImporter.class);
+        TeamImporter teamImp = playersResponse.getBody();
+        return teamImp.getPlayers();
     }
 
     private Competition fetchCompetition(String leagueCode){     
@@ -100,8 +113,9 @@ public class ImporterServiceImp implements ImporterService {
         return competition;
     }
 
-    private void checkIfCompetitionExist(Competition competition){
-        if (competitionRepository.findById(competition.getId()).get()!=null){
+    private void checkIfCompetitionExist(String legueCode){
+        Competition competition = competitionRepository.getByCode(legueCode);
+        if (competition != null){
             throw new LeagueCodeAlreadyImportedException();
         }
     }
