@@ -57,11 +57,9 @@ public class ImporterServiceImp implements ImporterService {
         try{
             this.checkIfCompetitionExist(leagueCode);
             Competition competition = this.fetchCompetition(leagueCode);
-
             competitionRepository.flush();
             competitionRepository.save(competition);
             this.savePlayers(competition);
- 
             return Response.successfullyImported();
         }
         catch(HttpClientErrorException ex){
