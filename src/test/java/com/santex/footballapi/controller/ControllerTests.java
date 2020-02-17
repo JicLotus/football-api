@@ -1,24 +1,17 @@
 package com.santex.footballapi.controller;
 
 import com.santex.footballapi.FootballApiApplication;
-import com.santex.footballapi.controller.v1.CompetitionsController;
 import com.santex.footballapi.dto.response.Response;
 import com.santex.footballapi.model.competition.Competition;
 import com.santex.footballapi.repository.CompetitionRepository;
-import com.santex.footballapi.service.CompetitionsService;
 import com.santex.footballapi.service.ImporterService;
-import com.santex.footballapi.service.ImporterServiceImp;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,8 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
 import com.santex.footballapi.exception.FootballApiExceptions.LeagueCodeAlreadyImportedException;
@@ -69,13 +60,11 @@ public class ControllerTests {
     }
 
     @Test
-    public void givenBadRequestRoute_thenReturn400()
-        throws Exception {
-
+    public void givenBadRequestRoute_thenReturn404() throws Exception {
         mvc.perform(get("/v1/competitions/bad-request-route/")
         .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
-        .andExpect(status().isBadRequest());
+        .andExpect(status().isNotFound());
     }
 
     @Test
@@ -88,7 +77,6 @@ public class ControllerTests {
     
     @Test
     public void givenCLCode_whenTotalPlayerIsRequested_thenReturn200() throws Exception {
-        
         mvc.perform(get("/v1/competitions/total-players/CL")
         .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
