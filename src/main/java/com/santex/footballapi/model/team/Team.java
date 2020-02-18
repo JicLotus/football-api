@@ -16,7 +16,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(exclude = "players")
+@EqualsAndHashCode(exclude = {"players"})
 
 @Getter
 @Setter
@@ -32,9 +32,6 @@ public class Team {
     private String shortName;
     private String areaName;
     private String email;
-
-    @Transient
-    private Area area;
 
     @ManyToMany(mappedBy = "teams")
     private Set<Competition> competitions = new HashSet<>();

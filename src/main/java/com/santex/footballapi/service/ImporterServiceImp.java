@@ -69,7 +69,6 @@ public class ImporterServiceImp implements ImporterService {
         Set<Team> teams = competition.getTeams();
         for(Team team : teams){
             Set<Player> players = fetchPlayers(team);
-            team.setAreaName(team.getArea().getName());
             team.setPlayers(players);
             teamRepository.flush();
             teamRepository.save(team);
