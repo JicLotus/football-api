@@ -1,5 +1,6 @@
 package com.santex.footballapi.model.team;
 
+import com.santex.footballapi.model.competition.Area;
 import com.santex.footballapi.model.competition.Competition;
 import com.santex.footballapi.model.player.Player;
 
@@ -31,6 +32,9 @@ public class Team {
     private String shortName;
     private String areaName;
     private String email;
+
+    @Transient
+    private Area area;
 
     @ManyToMany(mappedBy = "teams")
     private Set<Competition> competitions = new HashSet<>();
